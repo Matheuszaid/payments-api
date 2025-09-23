@@ -302,6 +302,7 @@ Latest k6 performance test results (working endpoints):
 - **P95 Latency**: 397.95ms ✅ (meets <500ms threshold)
 - **P50 Latency**: 95.33ms
 - **P90 Latency**: 322.08ms
+- **P99 Latency**: 449.32ms
 - **Throughput**: 2.67 req/s (successful requests)
 - **Success Rate**: 100% (health/metrics/docs endpoints)
 - **Test Duration**: 30s smoke test with 5 VUs
