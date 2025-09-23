@@ -1,0 +1,400 @@
+{
+  "info": {
+    "name": "Payments Reliability API",
+    "description": "Complete collection for testing the Payments Reliability API with Stripe and PayPal webhooks, health checks, and monitoring endpoints.",
+    "version": "0.2.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "noauth"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8065",
+      "type": "string"
+    },
+    {
+      "key": "demoSecret",
+      "value": "test_secret_for_development",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health & Monitoring",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Readiness Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ready",
+              "host": ["{{baseUrl}}"],
+              "path": ["ready"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Prometheus Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/metrics",
+              "host": ["{{baseUrl}}"],
+              "path": ["metrics"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Documentation",
+      "item": [
+        {
+          "name": "OpenAPI Schema",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/openapi.json",
+              "host": ["{{baseUrl}}"],
+              "path": ["openapi.json"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Interactive Docs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/docs",
+              "host": ["{{baseUrl}}"],
+              "path": ["docs"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Stripe Webhooks",
+      "item": [
+        {
+          "name": "Stripe Charge Succeeded",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Generate demo HMAC signature for Stripe webhook",
+                  "const payload = pm.request.body.raw;",
+                  "const secret = pm.variables.get('demoSecret');",
+                  "const timestamp = Math.floor(Date.now() / 1000);",
+                  "const signedPayload = timestamp + '.' + payload;",
+                  "",
+                  "// Note: In a real environment, you'd use proper HMAC-SHA256",
+                  "// For demo purposes, we'll use a simple signature",
+                  "const signature = CryptoJS.HmacSHA256(payload, secret).toString(CryptoJS.enc.Hex);",
+                  "",
+                  "pm.request.headers.add({",
+                  "    key: 'X-Demo-Signature',",
+                  "    value: signature",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "Stripe/1.0 (+https://stripe.com/docs/webhooks)"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"evt_1OHZK32eZvKYlo2CqP1xqMxH\",\n  \"object\": \"event\",\n  \"api_version\": \"2020-08-27\",\n  \"created\": 1697640000,\n  \"data\": {\n    \"object\": {\n      \"id\": \"ch_1OHZK32eZvKYlo2CqP1xqMxH\",\n      \"object\": \"charge\",\n      \"amount\": 2000,\n      \"currency\": \"usd\",\n      \"status\": \"succeeded\",\n      \"payment_intent\": \"pi_1OHZK32eZvKYlo2CqP1xqMxH\"\n    }\n  },\n  \"livemode\": false,\n  \"pending_webhooks\": 1,\n  \"request\": {\n    \"id\": \"req_1OHZK32eZvKYlo2CqP1xqMxH\",\n    \"idempotency_key\": null\n  },\n  \"type\": \"charge.succeeded\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/webhooks/stripe",
+              "host": ["{{baseUrl}}"],
+              "path": ["webhooks", "stripe"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Stripe Payment Intent Succeeded",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const payload = pm.request.body.raw;",
+                  "const secret = pm.variables.get('demoSecret');",
+                  "const signature = CryptoJS.HmacSHA256(payload, secret).toString(CryptoJS.enc.Hex);",
+                  "",
+                  "pm.request.headers.add({",
+                  "    key: 'X-Demo-Signature',",
+                  "    value: signature",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"evt_payment_intent_succeeded\",\n  \"object\": \"event\",\n  \"api_version\": \"2020-08-27\",\n  \"created\": 1697640000,\n  \"data\": {\n    \"object\": {\n      \"id\": \"pi_1OHZK32eZvKYlo2CqP1xqMxH\",\n      \"object\": \"payment_intent\",\n      \"amount\": 2000,\n      \"currency\": \"usd\",\n      \"status\": \"succeeded\",\n      \"charges\": {\n        \"data\": [\n          {\n            \"id\": \"ch_1OHZK32eZvKYlo2CqP1xqMxH\",\n            \"amount\": 2000,\n            \"status\": \"succeeded\"\n          }\n        ]\n      }\n    }\n  },\n  \"livemode\": false,\n  \"type\": \"payment_intent.succeeded\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/webhooks/stripe",
+              "host": ["{{baseUrl}}"],
+              "path": ["webhooks", "stripe"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "PayPal Webhooks",
+      "item": [
+        {
+          "name": "PayPal Payment Capture Completed",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const payload = pm.request.body.raw;",
+                  "const secret = pm.variables.get('demoSecret');",
+                  "const signature = CryptoJS.HmacSHA256(payload, secret).toString(CryptoJS.enc.Hex);",
+                  "",
+                  "pm.request.headers.add({",
+                  "    key: 'X-Demo-Signature',",
+                  "    value: signature",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "PayPal/1.0 (+https://developer.paypal.com/docs/api/webhooks/)"
+              },
+              {
+                "key": "PAYPAL-TRANSMISSION-ID",
+                "value": "demo_transmission_{{$timestamp}}"
+              },
+              {
+                "key": "PAYPAL-TRANSMISSION-TIME",
+                "value": "{{$isoTimestamp}}"
+              },
+              {
+                "key": "PAYPAL-CERT-URL",
+                "value": "https://api.sandbox.paypal.com/v1/notifications/certs/CERT-360caa42-fca2a594-a5cafa77"
+              },
+              {
+                "key": "PAYPAL-AUTH-ALGO",
+                "value": "SHA256withRSA"
+              },
+              {
+                "key": "PAYPAL-TRANSMISSION-SIG",
+                "value": "demo_signature_{{$timestamp}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"WH-6GH13871U48327813-08G42824F8236530H\",\n  \"event_version\": \"1.0\",\n  \"create_time\": \"2023-10-18T14:30:00Z\",\n  \"resource_type\": \"capture\",\n  \"event_type\": \"PAYMENT.CAPTURE.COMPLETED\",\n  \"summary\": \"Payment completed for $ 20.00 USD\",\n  \"resource\": {\n    \"id\": \"8AJ579492A6413722\",\n    \"amount\": {\n      \"currency_code\": \"USD\",\n      \"value\": \"20.00\"\n    },\n    \"status\": \"COMPLETED\",\n    \"custom_id\": \"order_12345\",\n    \"invoice_id\": \"INV-12345\",\n    \"create_time\": \"2023-10-18T14:29:45Z\",\n    \"update_time\": \"2023-10-18T14:30:00Z\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/webhooks/paypal",
+              "host": ["{{baseUrl}}"],
+              "path": ["webhooks", "paypal"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PayPal Billing Subscription Created",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const payload = pm.request.body.raw;",
+                  "const secret = pm.variables.get('demoSecret');",
+                  "const signature = CryptoJS.HmacSHA256(payload, secret).toString(CryptoJS.enc.Hex);",
+                  "",
+                  "pm.request.headers.add({",
+                  "    key: 'X-Demo-Signature',",
+                  "    value: signature",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"WH-BILLING-SUBSCRIPTION-CREATED\",\n  \"event_version\": \"1.0\",\n  \"create_time\": \"2023-10-18T14:30:00Z\",\n  \"resource_type\": \"subscription\",\n  \"event_type\": \"BILLING.SUBSCRIPTION.CREATED\",\n  \"summary\": \"Subscription created\",\n  \"resource\": {\n    \"id\": \"I-BW452GLLEP1G\",\n    \"plan_id\": \"P-5ML4271244454362WXNWU5NQ\",\n    \"status\": \"ACTIVE\",\n    \"status_update_time\": \"2018-12-10T21:20:49Z\",\n    \"start_time\": \"2018-12-10T21:20:49Z\",\n    \"quantity\": \"20\",\n    \"shipping_amount\": {\n      \"currency_code\": \"USD\",\n      \"value\": \"10.00\"\n    },\n    \"subscriber\": {\n      \"shipping_address\": {\n        \"name\": {\n          \"full_name\": \"John Doe\"\n        },\n        \"address\": {\n          \"address_line_1\": \"2211 N First Street\",\n          \"address_line_2\": \"Building 17\",\n          \"admin_area_2\": \"San Jose\",\n          \"admin_area_1\": \"CA\",\n          \"postal_code\": \"95131\",\n          \"country_code\": \"US\"\n        }\n      },\n      \"name\": {\n        \"given_name\": \"John\",\n        \"surname\": \"Doe\"\n      },\n      \"email_address\": \"customer@example.com\"\n    },\n    \"create_time\": \"2018-12-10T21:20:49Z\",\n    \"update_time\": \"2018-12-10T21:20:49Z\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/webhooks/paypal",
+              "host": ["{{baseUrl}}"],
+              "path": ["webhooks", "paypal"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Administration",
+      "item": [
+        {
+          "name": "Recent Events",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/events?limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "events"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reconciliation Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reconciliation/summary?hours_back=24",
+              "host": ["{{baseUrl}}"],
+              "path": ["reconciliation", "summary"],
+              "query": [
+                {
+                  "key": "hours_back",
+                  "value": "24"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Error Testing",
+      "item": [
+        {
+          "name": "Invalid Stripe Webhook (Bad Signature)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Demo-Signature",
+                "value": "invalid_signature"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"evt_invalid\",\n  \"object\": \"event\",\n  \"type\": \"charge.succeeded\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/webhooks/stripe",
+              "host": ["{{baseUrl}}"],
+              "path": ["webhooks", "stripe"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid PayPal Webhook (Missing Fields)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event_type\": \"PAYMENT.CAPTURE.COMPLETED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/webhooks/paypal",
+              "host": ["{{baseUrl}}"],
+              "path": ["webhooks", "paypal"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
