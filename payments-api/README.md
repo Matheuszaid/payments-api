@@ -1,20 +1,20 @@
 # Payments Reliability API
 
-[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-blue)](https://github.com/Matheuszaid/payments-api/actions)
-[![Coverage](https://img.shields.io/badge/Coverage-92%25-brightgreen)](https://github.com/Matheuszaid/payments-api)
-[![Security](https://img.shields.io/badge/Security-Bandit%20%7C%20Safety-green)](https://github.com/Matheuszaid/payments-api/security)
+[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-blue)](#)
+[![Coverage](https://img.shields.io/badge/Coverage-92%25-brightgreen)](#)
+[![Security](https://img.shields.io/badge/Security-Bandit%20%7C%20Safety-green)](#)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-blue)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009485)](https://fastapi.tiangolo.com)
 [![Docker](https://img.shields.io/badge/Docker-Multi--stage-blue)](https://docker.com)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-**A production-grade webhook processing service for Stripe and PayPal payments with robust signature verification, idempotency, DLQ retry mechanisms, and comprehensive monitoring.**
+A webhook processing service for Stripe and PayPal payments with signature verification, idempotency handling, retry mechanisms, and monitoring.
 
-**Why it matters in payments:**
-- **Replay Protection**: Constant-time signature verification prevents replay attacks
-- **Idempotency**: Duplicate detection prevents double-processing critical payment events
-- **Observability**: Real-time metrics and reconciliation detect payment flow anomalies
-- **Graceful Failure**: DLQ retry with exponential backoff ensures no webhook is lost
+**Key features:**
+- Prevents replay attacks with constant-time signature verification
+- Handles duplicate events to prevent double-processing
+- Includes metrics and reconciliation for payment flow monitoring
+- Implements DLQ retry with exponential backoff for reliability
 
 ## Features
 
@@ -40,7 +40,7 @@
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/your-username/payments-api
 cd payments-api
 
 # Create virtual environment
