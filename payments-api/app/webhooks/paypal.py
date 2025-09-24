@@ -21,20 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 async def get_paypal_access_token(client_id: str, client_secret: str, mode: str) -> str:
-    """
-    Get PayPal access token for webhook verification.
-
-    Args:
-        client_id: PayPal client ID
-        client_secret: PayPal client secret
-        mode: PayPal mode (live, sandbox)
-
-    Returns:
-        Access token string
-
-    Raises:
-        HTTPException: If unable to get token
-    """
+    """Get PayPal access token for webhook verification."""
     base_url = (
         "https://api.paypal.com" if mode == "live" else "https://api.sandbox.paypal.com"
     )

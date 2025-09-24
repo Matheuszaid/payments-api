@@ -24,19 +24,7 @@ async def process_stripe_webhook(
     db: AsyncSession = Depends(get_db),
     settings: Settings = Depends(settings_dep),
 ) -> WebhookResponse:
-    """
-    Process Stripe webhook with signature verification and idempotency.
-
-    Args:
-        request: FastAPI request object
-        db: Database session
-
-    Returns:
-        WebhookResponse indicating processing result
-
-    Raises:
-        HTTPException: For invalid signatures or malformed data
-    """
+    """Process Stripe webhook with signature verification and idempotency."""
 
     # Get raw body and signature header
     body = await request.body()

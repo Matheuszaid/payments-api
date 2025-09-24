@@ -1,4 +1,4 @@
-"""Security utilities for PII masking and sensitive data handling."""
+"""Security utilities for PII masking."""
 
 import re
 from typing import Any
@@ -44,7 +44,7 @@ def mask_card_number(text: str) -> str:
 
 
 def mask_pii_in_text(text: str) -> str:
-    """Comprehensive PII masking for log output."""
+    """Mask PII in text for logging."""
     if not isinstance(text, str):
         return str(text)
 
@@ -100,7 +100,7 @@ def is_sensitive_key(key: str) -> bool:
 
 
 def sanitize_log_data(data: Any) -> Any:
-    """Sanitize data for safe logging by masking PII and sensitive values."""
+    """Sanitize data for safe logging."""
     if isinstance(data, dict):
         result = {}
         for key, value in data.items():

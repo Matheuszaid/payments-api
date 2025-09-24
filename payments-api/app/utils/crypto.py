@@ -4,16 +4,7 @@ import time
 
 
 def constant_time_compare(a: str, b: str) -> bool:
-    """
-    Perform constant-time string comparison to prevent timing attacks.
-
-    Args:
-        a: First string to compare
-        b: Second string to compare
-
-    Returns:
-        True if strings are equal, False otherwise
-    """
+    """Constant-time string comparison."""
     if len(a) != len(b):
         return False
 
@@ -24,15 +15,7 @@ def constant_time_compare(a: str, b: str) -> bool:
 
 
 def parse_stripe_signature(signature_header: str) -> tuple[int, str] | None:
-    """
-    Parse Stripe signature header to extract timestamp and signature.
-
-    Args:
-        signature_header: Stripe-Signature header value
-
-    Returns:
-        Tuple of (timestamp, signature) or None if invalid
-    """
+    """Parse Stripe signature header."""
     if not signature_header:
         return None
 
@@ -62,18 +45,7 @@ def parse_stripe_signature(signature_header: str) -> tuple[int, str] | None:
 def verify_stripe_signature(
     payload: bytes, signature_header: str, signing_secret: str, tolerance: int = 300
 ) -> bool:
-    """
-    Verify Stripe webhook signature using official verification scheme.
-
-    Args:
-        payload: Raw webhook payload bytes
-        signature_header: Stripe-Signature header value
-        signing_secret: Stripe signing secret
-        tolerance: Maximum age of webhook in seconds
-
-    Returns:
-        True if signature is valid, False otherwise
-    """
+    """Verify Stripe webhook signature."""
     if not signing_secret:
         return False
 
@@ -99,17 +71,7 @@ def verify_stripe_signature(
 
 
 def verify_demo_hmac(payload: bytes, signature: str, secret: str) -> bool:
-    """
-    Verify HMAC signature for demo/testing purposes.
-
-    Args:
-        payload: Raw payload bytes
-        signature: HMAC signature to verify
-        secret: HMAC secret
-
-    Returns:
-        True if signature is valid, False otherwise
-    """
+    """Verify HMAC signature for demo/testing."""
     if not secret or not signature:
         return False
 
