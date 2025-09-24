@@ -86,9 +86,9 @@ class TestConcurrentIdempotency:
 
                 # Exactly 1 should be processed, rest should be duplicates or errors (due to race conditions)
                 assert success_count == 1, f"Expected 1 processed, got {success_count}"
-                assert (
-                    duplicate_count + error_count == 24
-                ), f"Expected 24 duplicates+errors, got {duplicate_count + error_count} (duplicates: {duplicate_count}, errors: {error_count})"
+                assert duplicate_count + error_count == 24, (
+                    f"Expected 24 duplicates+errors, got {duplicate_count + error_count} (duplicates: {duplicate_count}, errors: {error_count})"
+                )
 
                 # If we got exactly 1 processed and 24 duplicates/errors, idempotency is working correctly
                 # Database verification is skipped due to session isolation in concurrent tests
@@ -163,9 +163,9 @@ class TestConcurrentIdempotency:
                         if data.get("message") == "processed":
                             success_count += 1
 
-                assert (
-                    success_count == 10
-                ), f"Expected 10 processed, got {success_count}"
+                assert success_count == 10, (
+                    f"Expected 10 processed, got {success_count}"
+                )
 
                 # Database verification is skipped due to session isolation in concurrent tests
                 # Response codes already confirm successful processing
@@ -340,12 +340,12 @@ class TestConcurrentIdempotency:
 
                 # Should have at least 8 processed (allowing for some race condition failures)
                 # Total responses should be 50 (processed + duplicates + errors)
-                assert (
-                    processed_count >= 8
-                ), f"Expected at least 8 processed, got {processed_count}"
-                assert (
-                    processed_count + duplicate_count + error_count == 50
-                ), f"Expected 50 total responses, got {processed_count + duplicate_count + error_count}"
+                assert processed_count >= 8, (
+                    f"Expected at least 8 processed, got {processed_count}"
+                )
+                assert processed_count + duplicate_count + error_count == 50, (
+                    f"Expected 50 total responses, got {processed_count + duplicate_count + error_count}"
+                )
 
                 # Database verification is skipped due to session isolation in concurrent tests
                 # Response codes already confirm idempotency is working correctly
