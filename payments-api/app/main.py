@@ -73,7 +73,6 @@ for handler in logging.getLogger().handlers:
 
 logger = logging.getLogger(__name__)
 
-# Legacy metrics for JSON endpoint (deprecated - use Prometheus /metrics)
 metrics_counters: dict[str, int] = {
     "webhooks_received": 0,
     "webhooks_processed": 0,
@@ -132,7 +131,6 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     # Add request size limiting middleware
     @app.middleware("http")
     async def request_size_limit_middleware(request: Request, call_next):
-        """Limit request body size to prevent DoS attacks."""
         content_length = request.headers.get("content-length")
         if content_length:
             try:
@@ -152,7 +150,6 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     # Add request logging middleware with tracing
     @app.middleware("http")
     async def request_logging_middleware(request: Request, call_next):
-        """Log all requests with timing and trace propagation."""
         start_time = time.time()
 
         # Generate request_id and extract trace_id if present
@@ -231,12 +228,7 @@ def _add_routes(app: FastAPI) -> None:
         db: AsyncSession = Depends(get_db),
         settings: Settings = Depends(settings_dep),
     ):
-        """
-        Process Stripe webhook with signature verification.
-
-        Validates webhook signature using Stripe's official scheme,
-        ensures idempotency, and persists event data.
-        """
+        """Process Stripe webhook with signature verification."""
         start_time = time.time()
         try:
             metrics_counters["webhooks_received"] += 1
@@ -282,12 +274,7 @@ def _add_routes(app: FastAPI) -> None:
         db: AsyncSession = Depends(get_db),
         settings: Settings = Depends(settings_dep),
     ):
-        """
-        Process PayPal webhook with signature verification.
-
-        Supports both real PayPal verification API and demo HMAC mode
-        for development. Ensures idempotency and persists event data.
-        """
+        """Process PayPal webhook with signature verification."""
         start_time = time.time()
         try:
             metrics_counters["webhooks_received"] += 1
