@@ -6,7 +6,7 @@ services:
     ports:
       - "8065:8065"
     environment:
-      - APP_ENV=production
+      - APP_ENV=prod
       - DATABASE_URL=sqlite+aiosqlite:///./data/payments.db
       - STRIPE_SIGNING_SECRET=${STRIPE_SIGNING_SECRET}
       - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}
