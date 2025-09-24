@@ -56,6 +56,12 @@ coverage.xml
 *.cover
 *.py,cover
 .hypothesis/
+htmlcov/
+
+# Reports and temporary files
+reports/
+*.json
+*.md.backup
 
 # PM2
 .pm2/
